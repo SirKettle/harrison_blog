@@ -9,6 +9,7 @@ import * as blogSelectors from 'state/domain/blog/selector';
 import { Copy, Heading, SubHeading, Paragraph, Quote, SmallPrint } from '../typography';
 import { Loading } from '../Loading';
 import blogConfig from 'state/domain/blog/config';
+import BlogLinks from '../BlogLinks';
 
 const trimQuotes = str => str.replace(/"/g, '');
 
@@ -87,16 +88,16 @@ const Image = styled.img`
 `;
 
 const Side = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  background: #fdfdfd;
-  padding: 20px;
-  color: #555;
+  // display: flex;
+  // flex-direction: row;
+  // justify-content: flex-start;
+  // align-items: flex-start;
+  // flex-wrap: wrap;
+  // margin-bottom: 20px;
+  // border-radius: 4px;
+  // background: #fdfdfd;
+  // padding: 20px;
+  // color: #555;
 
   @media (min-width: 768px) {
     flex: 1 1 40%;
@@ -104,20 +105,20 @@ const Side = styled.div`
   }
 `;
 
-const navItemCss = css`
-  cursor: pointer;
-  display: inline;
-  color: #0abdf5;
-  margin-right: 10px;
-`;
-
-const ExternalNavItem = styled.a`
-  ${navItemCss}
-`;
-
-const NavItem = styled(Link)`
-  ${navItemCss}
-`;
+// const navItemCss = css`
+//   cursor: pointer;
+//   display: inline;
+//   color: #0abdf5;
+//   margin-right: 10px;
+// `;
+//
+// const ExternalNavItem = styled.a`
+//   ${navItemCss}
+// `;
+//
+// const NavItem = styled(Link)`
+//   ${navItemCss}
+// `;
 
 const renderPostContent = post => {
   const video = getVideo(post);
@@ -188,8 +189,9 @@ export const _Blog = ({ getPosts, blogLoadingStatus, blog, match, posts }) => {
       <Columns>
         <Blogs>{posts.map(renderPost)}</Blogs>
         <Side>
-          <NavItem to="/">Home</NavItem>
-          {blogConfig.map(renderNavItem(currentBlog))}
+          {/*<NavItem to="/">Home</NavItem>*/}
+          <BlogLinks inSidePanel />
+          {/*{blogConfig.map(renderNavItem(currentBlog))}*/}
         </Side>
       </Columns>
     </Loading>

@@ -5,6 +5,14 @@ import singPoster from 'assets/images/sing.jpg';
 
 export default [
   {
+    tag: 'home',
+    path: '/',
+    title: 'Home',
+    summary: 'All the blogs!',
+    background: 'linear-gradient(to right, orange , yellow, green, cyan, blue, violet)',
+    posterBackground: `linear-gradient(to right, orange , yellow, green, cyan, blue, violet)`,
+  },
+  {
     tag: 'fitness',
     path: '/blog/fitness',
     title: 'F.W.H.',
