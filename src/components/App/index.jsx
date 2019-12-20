@@ -10,10 +10,12 @@ import { LOADING_STATUS } from '../../state/loadingStatus';
 import { Home } from '../Home';
 import { Blog } from '../Blog';
 import { MaxWidth, Padding } from '../styledComponents';
+import blogConfig from 'state/domain/blog/config';
 
 const GlobalStyle = createGlobalStyle`
   body {
-    background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet);
+    background: ${blogConfig.find(c => c.tag === 'home').background};
+    transition: background 1s ease-out;
     color: white;
     line-height: 1.5;
   }

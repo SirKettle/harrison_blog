@@ -14,14 +14,14 @@ const navItemCss = css`
   background-repeat: no-repeat;
   background-position: center 0;
   color: #fff;
-  padding: ${({ inSidePanel }) => (inSidePanel ? '20px' : '100px')} 3px;
+  padding: ${props => (props['data-side-panel'] ? '20px' : '100px')} 3px;
   display: flex;
   justify-content: center;
   align-items: center;
   text-decoration: none;
 
   @media (min-width: 768px) {
-    padding: ${({ inSidePanel }) => (inSidePanel ? '100px' : '100px')} 3px;
+    padding: ${props => (props['data-side-panel'] ? '100px' : '100px')} 3px;
   }
 `;
 
@@ -49,23 +49,23 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-const FlexiLink = ({ href, path, children, ...other }) => {
+const FlexiLink = ({ href, path, children, inSidePanel, ...other }) => {
   if (href) {
     return (
-      <ExternalNavItem href={href} {...other}>
+      <ExternalNavItem href={href} data-side-panel={inSidePanel} {...other}>
         {children}
       </ExternalNavItem>
     );
   }
 
   return (
-    <NavItem to={path} {...other}>
+    <NavItem to={path} data-side-panel={inSidePanel} {...other}>
       {children}
     </NavItem>
   );
 };
 
-const renderNavItem = ({ inSidePanel, showHome }) => blog => (
+const renderNavItem = ({ inSidePanel }) => blog => (
   <BlogLink key={blog.tag} inSidePanel={inSidePanel}>
     <FlexiLink {...pick(['href', 'path'])(blog)} background={blog.posterBackground} inSidePanel={inSidePanel}>
       {inSidePanel ? <Paragraph as="h3">{blog.title}</Paragraph> : <SubHeading>{blog.title}</SubHeading>}

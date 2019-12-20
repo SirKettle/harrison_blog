@@ -1,12 +1,11 @@
-import React from 'react';
-import { path } from 'ramda';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Link, useParams, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import styled, { createGlobalStyle, css } from 'styled-components';
 import { actions as blogActions } from 'state/domain/blog/action';
 import * as blogSelectors from 'state/domain/blog/selector';
-import { Copy, Heading, SubHeading, Paragraph, Quote, SmallPrint } from '../typography';
+import { Heading, SubHeading, Paragraph, SmallPrint } from '../typography';
 import { Loading } from '../Loading';
 import blogConfig from 'state/domain/blog/config';
 import BlogLinks from '../BlogLinks';
@@ -16,8 +15,12 @@ const trimQuotes = str => str.replace(/"/g, '');
 const getVideo = ({ body }) => {
   if (/<video /.test(body)) {
     try {
-      const parts = JSON.parse(body.split("data-npf='")[1].split("'>")[0]);
-      return parts;
+      const video = JSON.parse(body.split("data-npf='")[1].split("'>")[0]);
+      return {
+        ...video,
+        posterUrl: (video.poster && video.poster[0] && video.poster[0].url) || null,
+        mediaUrl: (video.media && video.media.url) || null,
+      };
     } catch (e) {
       return null;
     }
@@ -35,7 +38,7 @@ const getImage = ({ body }) => {
         const val = trimQuotes(keyValue[1]);
         return {
           ...acc,
-          [keyValue[0]]: isNaN(val) ? val : Number(val),
+          [key]: isNaN(val) ? val : Number(val),
         };
       }, {});
     } catch (e) {
@@ -53,7 +56,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Columns = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   @media (min-width: 768px) {
     flex-direction: row;
     align-items: flex-start;
@@ -88,53 +91,22 @@ const Image = styled.img`
 `;
 
 const Side = styled.div`
-  // display: flex;
-  // flex-direction: row;
-  // justify-content: flex-start;
-  // align-items: flex-start;
-  // flex-wrap: wrap;
-  // margin-bottom: 20px;
-  // border-radius: 4px;
-  // background: #fdfdfd;
-  // padding: 20px;
-  // color: #555;
-
+  margin: 20px -10px;
   @media (min-width: 768px) {
     flex: 1 1 40%;
-    margin-left: 20px;
+    margin: 0 0 0 20px;
   }
 `;
-
-// const navItemCss = css`
-//   cursor: pointer;
-//   display: inline;
-//   color: #0abdf5;
-//   margin-right: 10px;
-// `;
-//
-// const ExternalNavItem = styled.a`
-//   ${navItemCss}
-// `;
-//
-// const NavItem = styled(Link)`
-//   ${navItemCss}
-// `;
 
 const renderPostContent = post => {
   const video = getVideo(post);
 
-  if (video) {
-    // console.log(video);
-    return (
-      <Video controls="controls" poster={video.poster.url}>
-        <source src={video.media.url} type={video.media.type}></source>
-      </Video>
-    );
+  if (video && video.mediaUrl) {
+    return <Video controls="controls" poster={video.posterUrl} src={video.mediaUrl} />;
   }
 
   const image = getImage(post);
   if (image) {
-    // console.log(image);
     return <Image src={image.src}></Image>;
   }
 
@@ -149,29 +121,12 @@ const renderPost = post => (
   </BlogPost>
 );
 
-const renderNavItem = currentBlog => blog => {
-  if (blog.href) {
-    return (
-      <ExternalNavItem key={blog.tag} href={blog.href}>
-        {blog.title}
-      </ExternalNavItem>
-    );
-  }
-
-  return (
-    <NavItem key={blog.tag} to={blog.path}>
-      {blog.title}
-    </NavItem>
-  );
-};
-
 export const _Blog = ({ getPosts, blogLoadingStatus, blog, match, posts }) => {
   const {
     params: { tag },
   } = match;
 
   React.useEffect(() => {
-    console.log('tag change', tag);
     getPosts({ tag });
   }, [tag]);
 
@@ -182,19 +137,19 @@ export const _Blog = ({ getPosts, blogLoadingStatus, blog, match, posts }) => {
   }
 
   return (
-    <Loading status={blogLoadingStatus}>
+    <Fragment>
       <GlobalStyle background={currentBlog.background || 'green'} />
-      <Heading>{currentBlog.title}</Heading>
-      <SubHeading>{currentBlog.summary}</SubHeading>
-      <Columns>
-        <Blogs>{posts.map(renderPost)}</Blogs>
-        <Side>
-          {/*<NavItem to="/">Home</NavItem>*/}
-          <BlogLinks inSidePanel />
-          {/*{blogConfig.map(renderNavItem(currentBlog))}*/}
-        </Side>
-      </Columns>
-    </Loading>
+      <Loading status={blogLoadingStatus}>
+        <Heading>{currentBlog.title}</Heading>
+        <SubHeading>{currentBlog.summary}</SubHeading>
+        <Columns>
+          <Blogs>{posts.map(renderPost)}</Blogs>
+          <Side>
+            <BlogLinks inSidePanel />
+          </Side>
+        </Columns>
+      </Loading>
+    </Fragment>
   );
 };
 
